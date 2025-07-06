@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>多項健康紀錄系統 Prototype</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { 
+      font-family: 'Segoe UI', 'Microsoft JhengHei', Arial, sans-serif; 
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      margin: 0; 
+      padding: 20px; 
+      min-height: 100vh;
+    }
+    .container { 
+      max-width: 1200px; 
+      margin: 0 auto; 
+      background: rgba(255, 255, 255, 0.95); 
+      border-radius: 20px; 
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1); 
+      padding: 40px; 
+      backdrop-filter: blur(10px);
+    }
+    h1 { 
+      text-align: center; 
+      color: #2d3748; 
+      font-size: 2.5em;
+      margin-bottom: 30px;
+      font-weight: 300;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .form-section {
+      background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+      border-radius: 15px;
+      padding: 30px;
+      margin-bottom: 30px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    }
+    .form-title {
+      font-size: 1.3em;
+      color: #4a5568;
+      margin-bottom: 20px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .form-title::before {
+      content: "📝";
+      font-size: 1.2em;
+    }
+    form { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px; 
+      align-items: end;
+    }
+    .form-group { 
+      display: flex; 
+      flex-direction: column; 
+    }
+    .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+    label { 
+      font-weight: 600; 
+      margin-bottom: 8px; 
+      color: #2d3748;
+      font-size: 0.9em;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    input, select, textarea { 
+      padding: 12px 16px; 
+      border: 2px solid #e2e8f0; 
+      border-radius: 10px; 
+      font-size: 1em; 
+      transition: all 0.3s ease;
+      background: white;
+    }
+    input:focus, select:focus, textarea:focus { 
+      outline: none; 
+      border-color: #667eea; 
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      transform: translateY(-2px);
+    }
+    button { 
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+      color: white; 
+      border: none; 
+      border-radius: 10px; 
+      padding: 15px 30px; 
+      font-size: 1em; 
+      cursor: pointer; 
+      transition: all 0.3s ease;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    button:hover { 
+      transform: translateY(-2px); 
+      box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+    }
+    button:active { 
+      transform: translateY(0); 
+    }
+    #printBtn { 
+      background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+      margin-left: 0;
+      margin-bottom: 0;
+      white-space: nowrap;
+    }
+    #printBtn:hover {
+      box-shadow: 0 10px 20px rgba(72, 187, 120, 0.3);
+    }
+    .export-buttons {
+      float: right;
+      margin-bottom: 20px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .export-btn {
+      background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+      padding: 12px 20px;
+      font-size: 0.9em;
+      white-space: nowrap;
+    }
+    .export-btn:hover {
+      box-shadow: 0 10px 20px rgba(237, 137, 54, 0.3);
+    }
+    .export-btn.json {
+      background: linear-gradient(135deg, #805ad5 0%, #6b46c1 100%);
+    }
+    .export-btn.json:hover {
+      box-shadow: 0 10px 20px rgba(128, 90, 213, 0.3);
+    }
+    .import-btn {
+      background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+      padding: 12px 20px;
+      font-size: 0.9em;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+    }
+    .import-btn:hover {
+      box-shadow: 0 10px 20px rgba(66, 153, 225, 0.3);
+    }
+    .import-input {
+      display: none;
+    }
+    .status { 
+      font-size: 1.1em; 
+      margin: 20px 0; 
+      font-weight: 600; 
+      padding: 15px;
+      border-radius: 10px;
+      text-align: center;
+    }
+    .table-section {
+      background: white;
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    }
+    .table-title {
+      font-size: 1.3em;
+      color: #4a5568;
+      margin-bottom: 20px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .table-title::before {
+      content: "📊";
+      font-size: 1.2em;
+    }
+    table { 
+      width: 100%; 
+      border-collapse: collapse; 
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    }
+    th, td { 
+      padding: 15px 12px; 
+      text-align: center; 
+      border-bottom: 1px solid #e2e8f0;
+    }
+    th { 
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+      color: white;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-size: 0.9em;
+    }
+    tr:hover {
+      background: #f7fafc;
+    }
+    .level-normal { 
+      color: #38a169; 
+      font-weight: 600;
+    }
+    .level-pre { 
+      color: #d69e2e; 
+      font-weight: 600;
+    }
+    .level-1 { 
+      color: #e53e3e; 
+      font-weight: 600;
+    }
+    .level-2 { 
+      color: #c53030; 
+      font-weight: 600;
+    }
+    .empty-message {
+      text-align: center;
+      color: #718096;
+      font-style: italic;
+      padding: 40px;
+    }
+    .delete-btn {
+      background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 0.8em;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .delete-btn:hover {
+      box-shadow: 0 4px 8px rgba(229, 62, 62, 0.3);
+      transform: translateY(-1px);
+    }
+    .clear-all-btn {
+      background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 20px;
+      font-size: 0.9em;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-left: 0;
+      white-space: nowrap;
+    }
+    .clear-all-btn:hover {
+      box-shadow: 0 8px 16px rgba(229, 62, 62, 0.3);
+    }
+    .print-controls {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin: 50px 0 20px 0;
+      padding: 20px;
+      background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .print-controls label {
+      font-weight: 600;
+      color: #4a5568;
+      margin: 0;
+      text-transform: none;
+      letter-spacing: normal;
+    }
+    .print-controls select,
+    .print-controls input {
+      padding: 8px 12px;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 0.9em;
+      background: white;
+    }
+    .print-controls select:focus,
+    .print-controls input:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+    }
+    .date-range {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .date-range input {
+      width: 130px;
+    }
+    @media (max-width: 768px) {
+      .container { padding: 20px; }
+      form { grid-template-columns: 1fr; }
+      h1 { font-size: 2em; }
+      table { font-size: 0.9em; }
+      th, td { padding: 10px 8px; }
+      .export-buttons {
+        float: none;
+        justify-content: center;
+        margin-bottom: 15px;
+      }
+      .export-buttons > * {
+        margin: 5px;
+      }
+    }
+    @media print {
+      body { background: white; }
+      .container { box-shadow: none; padding: 0; }
+      .form-section, #printBtn { display: none !important; }
+      h1 { margin-top: 0; }
+      table { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🏥 多項健康紀錄系統</h1>
+    
+    <div class="form-section">
+      <div class="form-title">❤️ 血壓紀錄</div>
+      <form id="bpForm">
+        <div class="form-group">
+          <label for="bpDatetime">📅 日期時間</label>
+          <input type="datetime-local" id="bpDatetime" name="datetime" required>
+        </div>
+        <div class="form-group">
+          <label for="bpTimePeriod">⏰ 時段</label>
+          <select id="bpTimePeriod" name="timePeriod" required>
+            <option value="早上">🌅 早上</option>
+            <option value="下午">🌆 下午</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="systolic">❤️ 收縮壓 (mmHg)</label>
+          <input type="number" id="systolic" name="systolic" min="50" max="250" placeholder="120" required>
+        </div>
+        <div class="form-group">
+          <label for="diastolic">💓 舒張壓 (mmHg)</label>
+          <input type="number" id="diastolic" name="diastolic" min="30" max="150" placeholder="80" required>
+        </div>
+        <div class="form-group">
+          <label for="heartRate">💗 心跳 (bpm)</label>
+          <input type="number" id="heartRate" name="heartRate" min="30" max="200" placeholder="75" required>
+        </div>
+        <div class="form-group full-width">
+          <label for="bpNote">📝 備註</label>
+          <textarea id="bpNote" name="note" rows="2" placeholder="例如：運動後測量、剛起床、用藥後..."></textarea>
+        </div>
+        <div class="form-group full-width">
+          <button type="submit">✅ 新增血壓紀錄</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="form-section">
+      <div class="form-title">🩸 血糖紀錄</div>
+      <form id="sugarForm">
+        <div class="form-group">
+          <label for="sugarDatetime">📅 日期時間</label>
+          <input type="datetime-local" id="sugarDatetime" name="datetime" required>
+        </div>
+        <div class="form-group">
+          <label for="sugarTimePeriod">⏰ 時段</label>
+          <select id="sugarTimePeriod" name="timePeriod" required>
+            <option value="早上">🌅 早上</option>
+            <option value="下午">🌆 下午</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="bloodSugar">🩸 血糖 (mg/dL)</label>
+          <input type="number" id="bloodSugar" name="bloodSugar" min="40" max="400" placeholder="100" required>
+        </div>
+        <div class="form-group">
+          <label for="sugarType">🍽️ 血糖時機</label>
+          <select id="sugarType" name="sugarType" required>
+            <option value="飯前">🍽️ 飯前</option>
+            <option value="飯後">🍴 飯後</option>
+          </select>
+        </div>
+        <div class="form-group full-width">
+          <label for="sugarNote">📝 備註</label>
+          <textarea id="sugarNote" name="note" rows="2" placeholder="例如：運動後測量、剛起床、用藥後..."></textarea>
+        </div>
+        <div class="form-group full-width">
+          <button type="submit">✅ 新增血糖紀錄</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="status" id="statusMsg"></div>
+    
+    <div class="table-section">
+      <div class="table-title">健康紀錄總覽</div>
+      <div class="export-buttons">
+        <button class="export-btn" onclick="exportToCSV()">📊 匯出 CSV</button>
+        <button class="export-btn json" onclick="exportToJSON()">💾 匯出 JSON</button>
+        <label class="import-btn" for="importInput">⬆️ 匯入 JSON
+          <input id="importInput" class="import-input" type="file" accept="application/json" onchange="importFromJSON(event)">
+        </label>
+        <button id="printBtn" onclick="printSelectedRecords()">🖨️ 列印紀錄表</button>
+        <button class="clear-all-btn" onclick="clearAllRecords()">🗑️ 清空所有紀錄</button>
+      </div>
+      
+      <div class="print-controls">
+        <label>📅 列印範圍：</label>
+        <select id="printRange" onchange="updateDateInputs()">
+          <option value="today">今天</option>
+          <option value="7days">最近7天</option>
+          <option value="30days">最近30天</option>
+          <option value="custom">自訂日期範圍</option>
+        </select>
+        <div class="date-range" id="customDateRange" style="display:none;">
+          <label>從：</label>
+          <input type="date" id="startDate">
+          <label>到：</label>
+          <input type="date" id="endDate">
+        </div>
+      </div>
+      <table id="recordTable">
+        <thead>
+          <tr>
+            <th>📅 日期</th>
+            <th>⏰ 時段</th>
+            <th>📊 類型</th>
+            <th>❤️ 收縮壓</th>
+            <th>💓 舒張壓</th>
+            <th>💗 心跳</th>
+            <th>🩸 血糖</th>
+            <th>🍽️ 血糖時機</th>
+            <th>📊 分級</th>
+            <th>📝 備註</th>
+            <th>❌ 操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td colspan="11" class="empty-message">尚無紀錄，請新增您的第一筆健康資料</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    // 分級判斷邏輯
+    function getBpLevel(s, d) {
+      if (s === '' || d === '' || isNaN(s) || isNaN(d)) return null;
+      if (s >= 160 || d >= 100) return { level: '🚨 二期高血壓', class: 'level-2' };
+      if (s >= 140 || d >= 90) return { level: '⚠️ 一期高血壓', class: 'level-1' };
+      if (s >= 120 || d >= 80) return { level: '🌟 高血壓前期', class: 'level-pre' };
+      return { level: '💚 正常', class: 'level-normal' };
+    }
+    function getSugarLevel(val, type) {
+      if (!val || isNaN(val) || type !== '飯前') return null;
+      if (val >= 126) return { level: '⚠️ 血糖過高', class: 'level-1' };
+      if (val >= 100) return { level: '🌟 血糖偏高', class: 'level-pre' };
+      if (val >= 70) return { level: '💚 血糖正常', class: 'level-normal' };
+      return { level: '⚠️ 血糖過低', class: 'level-2' };
+    }
+
+    // 取得 localStorage 紀錄
+    function getRecords() {
+      return JSON.parse(localStorage.getItem('bpRecords') || '[]');
+    }
+    // 儲存到 localStorage
+    function saveRecords(records) {
+      localStorage.setItem('bpRecords', JSON.stringify(records));
+    }
+    // 顯示表格
+    function renderTable() {
+      const records = getRecords();
+      const tbody = document.querySelector('#recordTable tbody');
+      tbody.innerHTML = '';
+      
+      if (records.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="11" class="empty-message">尚無紀錄，請新增您的第一筆健康資料</td></tr>';
+        return;
+      }
+      
+      records.sort((a, b) => new Date(b.datetime) - new Date(a.datetime));
+      for (const rec of records) {
+        const d = new Date(rec.datetime);
+        const dateStr = d.toLocaleDateString('zh-Hant', { year: 'numeric', month: '2-digit', day: '2-digit' });
+        let levelStr = '';
+        if (rec.bpLevel) levelStr += `<span class="${rec.bpLevel.class}">${rec.bpLevel.level}</span> `;
+        if (rec.sugarLevel) levelStr += `<span class="${rec.sugarLevel.class}">${rec.sugarLevel.level}</span>`;
+        tbody.innerHTML += `<tr>
+          <td>${dateStr}</td>
+          <td>${rec.timePeriod || ''}</td>
+          <td>${rec.type === 'bloodPressure' ? '❤️ 血壓' : '🩸 血糖'}</td>
+          <td>${rec.systolic ?? ''}</td>
+          <td>${rec.diastolic ?? ''}</td>
+          <td>${rec.heartRate ?? ''}</td>
+          <td>${rec.bloodSugar ?? ''}</td>
+          <td>${rec.sugarType ?? ''}</td>
+          <td>${levelStr}</td>
+          <td>${rec.note ? rec.note : ''}</td>
+          <td><button class="delete-btn" onclick="deleteRecord(${records.indexOf(rec)})">🗑️ 刪除</button></td>
+        </tr>`;
+      }
+    }
+    // 血壓表單送出
+    document.getElementById('bpForm').onsubmit = function(e) {
+      e.preventDefault();
+      const datetime = document.getElementById('bpDatetime').value;
+      const timePeriod = document.getElementById('bpTimePeriod').value;
+      const systolic = document.getElementById('systolic').value;
+      const diastolic = document.getElementById('diastolic').value;
+      const heartRate = document.getElementById('heartRate').value;
+      const note = document.getElementById('bpNote').value.trim();
+      
+      if (!datetime) return;
+      
+      const bpLevel = getBpLevel(Number(systolic), Number(diastolic));
+      
+      // 狀態顯示
+      document.getElementById('statusMsg').innerHTML = `<span class="${bpLevel.class}">${bpLevel.level}</span>`;
+      
+      // 新增紀錄
+      const records = getRecords();
+      records.push({
+        datetime, 
+        timePeriod,
+        type: 'bloodPressure',
+        systolic: Number(systolic),
+        diastolic: Number(diastolic),
+        heartRate: Number(heartRate),
+        note,
+        bpLevel
+      });
+      
+      saveRecords(records);
+      renderTable();
+      this.reset();
+      document.getElementById('bpDatetime').value = new Date().toISOString().slice(0,16);
+    };
+    
+    // 血糖表單送出
+    document.getElementById('sugarForm').onsubmit = function(e) {
+      e.preventDefault();
+      const datetime = document.getElementById('sugarDatetime').value;
+      const timePeriod = document.getElementById('sugarTimePeriod').value;
+      const bloodSugar = document.getElementById('bloodSugar').value;
+      const sugarType = document.getElementById('sugarType').value;
+      const note = document.getElementById('sugarNote').value.trim();
+      
+      if (!datetime) return;
+      
+      const sugarLevel = getSugarLevel(Number(bloodSugar), sugarType);
+      
+      // 狀態顯示
+      if (sugarLevel) {
+        document.getElementById('statusMsg').innerHTML = `<span class="${sugarLevel.class}">${sugarLevel.level}</span>`;
+      } else {
+        document.getElementById('statusMsg').innerHTML = '<span style="color:#718096">血糖紀錄已新增</span>';
+      }
+      
+      // 新增紀錄
+      const records = getRecords();
+      records.push({
+        datetime, 
+        timePeriod,
+        type: 'bloodSugar',
+        bloodSugar: Number(bloodSugar),
+        sugarType,
+        note,
+        sugarLevel
+      });
+      
+      saveRecords(records);
+      renderTable();
+      this.reset();
+      document.getElementById('sugarDatetime').value = new Date().toISOString().slice(0,16);
+    };
+
+    // 頁面載入時
+    window.onload = function() {
+      // 預設填入現在時間
+      document.getElementById('bpDatetime').value = new Date().toISOString().slice(0,16);
+      document.getElementById('sugarDatetime').value = new Date().toISOString().slice(0,16);
+      renderTable();
+    };
+
+    // 匯出 CSV 功能
+    function exportToCSV() {
+      const records = getRecords();
+      if (records.length === 0) {
+        alert('尚無紀錄可匯出');
+        return;
+      }
+      
+      let csv = '日期,時段,類型,收縮壓,舒張壓,心跳,血糖,血糖時機,分級,備註\n';
+      
+      records.sort((a, b) => new Date(b.datetime) - new Date(a.datetime));
+      for (const rec of records) {
+        const d = new Date(rec.datetime);
+        const dateStr = d.toLocaleDateString('zh-Hant', { year: 'numeric', month: '2-digit', day: '2-digit' });
+        let levelStr = '';
+        if (rec.bpLevel) levelStr += rec.bpLevel.level + ' ';
+        if (rec.sugarLevel) levelStr += rec.sugarLevel.level;
+        
+        csv += `"${dateStr}","${rec.timePeriod || ''}","${rec.type === 'bloodPressure' ? '❤️ 血壓' : '🩸 血糖'}","${rec.systolic || ''}","${rec.diastolic || ''}","${rec.heartRate || ''}","${rec.bloodSugar || ''}","${rec.sugarType || ''}","${levelStr}","${rec.note || ''}"\n`;
+      }
+      
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', `健康紀錄_${new Date().toISOString().slice(0,10)}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+    
+    // 匯出 JSON 功能
+    function exportToJSON() {
+      const records = getRecords();
+      if (records.length === 0) {
+        alert('尚無紀錄可匯出');
+        return;
+      }
+      
+      const dataStr = JSON.stringify(records, null, 2);
+      const blob = new Blob([dataStr], { type: 'application/json;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', `健康紀錄_${new Date().toISOString().slice(0,10)}.json`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // 匯入 JSON 功能
+    function importFromJSON(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const imported = JSON.parse(e.target.result);
+          if (!Array.isArray(imported)) throw new Error('格式錯誤');
+          const records = getRecords();
+          // 合併資料（避免重複: 以 datetime+時段 判斷）
+          const key = r => `${r.datetime}_${r.timePeriod}`;
+          const existMap = Object.fromEntries(records.map(r => [key(r), r]));
+          for (const rec of imported) {
+            if (!existMap[key(rec)]) records.push(rec);
+          }
+          saveRecords(records);
+          renderTable();
+          document.getElementById('statusMsg').innerHTML = '<span style="color:#3182ce">✅ 匯入成功！</span>';
+        } catch {
+          alert('匯入失敗，請確認檔案格式正確！');
+        }
+        event.target.value = '';
+      };
+      reader.readAsText(file);
+    }
+
+    // 刪除單筆紀錄
+    function deleteRecord(index) {
+      if (confirm('確定要刪除這筆紀錄嗎？')) {
+        const records = getRecords();
+        records.splice(index, 1);
+        saveRecords(records);
+        renderTable();
+        document.getElementById('statusMsg').innerHTML = '<span style="color:#e53e3e">🗑️ 紀錄已刪除</span>';
+      }
+    }
+    
+    // 清空所有紀錄
+    function clearAllRecords() {
+      if (confirm('確定要清空所有紀錄嗎？此操作無法復原！')) {
+        localStorage.removeItem('bpRecords');
+        renderTable();
+        document.getElementById('statusMsg').innerHTML = '<span style="color:#e53e3e">🗑️ 所有紀錄已清空</span>';
+      }
+    }
+
+    // 更新日期輸入欄位顯示
+    function updateDateInputs() {
+      const range = document.getElementById('printRange').value;
+      const customRange = document.getElementById('customDateRange');
+      const startDate = document.getElementById('startDate');
+      const endDate = document.getElementById('endDate');
+      
+      if (range === 'custom') {
+        customRange.style.display = 'flex';
+        const today = new Date().toISOString().slice(0,10);
+        startDate.value = today;
+        endDate.value = today;
+      } else {
+        customRange.style.display = 'none';
+      }
+    }
+    
+    // 取得選定範圍的紀錄
+    function getFilteredRecords() {
+      const records = getRecords();
+      const range = document.getElementById('printRange').value;
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      let filtered = records;
+      
+      switch(range) {
+        case 'today':
+          filtered = records.filter(rec => {
+            const recDate = new Date(rec.datetime);
+            recDate.setHours(0, 0, 0, 0);
+            return recDate.getTime() === today.getTime();
+          });
+          break;
+        case '7days':
+          const weekAgo = new Date(today);
+          weekAgo.setDate(today.getDate() - 7);
+          filtered = records.filter(rec => {
+            const recDate = new Date(rec.datetime);
+            return recDate >= weekAgo;
+          });
+          break;
+        case '30days':
+          const monthAgo = new Date(today);
+          monthAgo.setDate(today.getDate() - 30);
+          filtered = records.filter(rec => {
+            const recDate = new Date(rec.datetime);
+            return recDate >= monthAgo;
+          });
+          break;
+        case 'custom':
+          const startDate = new Date(document.getElementById('startDate').value);
+          const endDate = new Date(document.getElementById('endDate').value);
+          endDate.setHours(23, 59, 59, 999);
+          filtered = records.filter(rec => {
+            const recDate = new Date(rec.datetime);
+            return recDate >= startDate && recDate <= endDate;
+          });
+          break;
+      }
+      
+      return filtered.sort((a, b) => new Date(b.datetime) - new Date(a.datetime));
+    }
+    
+    // 列印選定範圍的紀錄
+    function printSelectedRecords() {
+      const filteredRecords = getFilteredRecords();
+      if (filteredRecords.length === 0) {
+        alert('選定範圍內沒有紀錄可列印');
+        return;
+      }
+      
+      // 建立列印視窗
+      const printWindow = window.open('', '_blank');
+      const range = document.getElementById('printRange').value;
+      let rangeText = '';
+      
+      switch(range) {
+        case 'today':
+          rangeText = '今天';
+          break;
+        case '7days':
+          rangeText = '最近7天';
+          break;
+        case '30days':
+          rangeText = '最近30天';
+          break;
+        case 'custom':
+          const startDate = document.getElementById('startDate').value;
+          const endDate = document.getElementById('endDate').value;
+          rangeText = `${startDate} 至 ${endDate}`;
+          break;
+      }
+      
+      printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>健康紀錄表 - ${rangeText}</title>
+          <style>
+            body { font-family: 'Microsoft JhengHei', Arial, sans-serif; margin: 20px; }
+            h1 { text-align: center; color: #2d3748; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+            th { background: #f7fafc; font-weight: bold; }
+            .level-normal { color: #38a169; }
+            .level-pre { color: #d69e2e; }
+            .level-1 { color: #e53e3e; }
+            .level-2 { color: #c53030; }
+            @media print { body { margin: 0; } }
+          </style>
+        </head>
+        <body>
+          <h1>🏥 健康紀錄表</h1>
+          <p><strong>列印範圍：</strong>${rangeText}</p>
+          <p><strong>列印時間：</strong>${new Date().toLocaleString('zh-Hant')}</p>
+          <table>
+            <thead>
+              <tr>
+                <th>日期</th>
+                <th>時段</th>
+                <th>類型</th>
+                <th>收縮壓</th>
+                <th>舒張壓</th>
+                <th>心跳</th>
+                <th>血糖</th>
+                <th>血糖時機</th>
+                <th>分級</th>
+                <th>備註</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${filteredRecords.map(rec => {
+                const d = new Date(rec.datetime);
+                const dateStr = d.toLocaleDateString('zh-Hant', { year: 'numeric', month: '2-digit', day: '2-digit' });
+                let levelStr = '';
+                if (rec.bpLevel) levelStr += `<span class="${rec.bpLevel.class}">${rec.bpLevel.level}</span> `;
+                if (rec.sugarLevel) levelStr += `<span class="${rec.sugarLevel.class}">${rec.sugarLevel.level}</span>`;
+                return `<tr>
+                  <td>${dateStr}</td>
+                  <td>${rec.timePeriod || ''}</td>
+                  <td>${rec.type === 'bloodPressure' ? '❤️ 血壓' : '🩸 血糖'}</td>
+                  <td>${rec.systolic ?? ''}</td>
+                  <td>${rec.diastolic ?? ''}</td>
+                  <td>${rec.heartRate ?? ''}</td>
+                  <td>${rec.bloodSugar ?? ''}</td>
+                  <td>${rec.sugarType ?? ''}</td>
+                  <td>${levelStr}</td>
+                  <td>${rec.note ? rec.note : ''}</td>
+                </tr>`;
+              }).join('')}
+            </tbody>
+          </table>
+        </body>
+        </html>
+      `);
+      
+      printWindow.document.close();
+      printWindow.focus();
+      setTimeout(() => printWindow.print(), 500);
+    }
+  </script>
+</body>
+</html> 
