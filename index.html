@@ -105,6 +105,21 @@
     button:active { 
       transform: translateY(0); 
     }
+    
+    /* 觸控優化 */
+    @media (hover: none) and (pointer: coarse) {
+      button:hover {
+        transform: none;
+        box-shadow: none;
+      }
+      button:active {
+        transform: scale(0.98);
+        box-shadow: 0 5px 10px rgba(102, 126, 234, 0.2);
+      }
+      .delete-btn:active {
+        transform: scale(0.95);
+      }
+    }
     #printBtn { 
       background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
       margin-left: 0;
@@ -188,6 +203,13 @@
       background: white;
       border-radius: 10px;
       overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    }
+    
+    /* 表格響應式容器 */
+    .table-container {
+      overflow-x: auto;
+      border-radius: 10px;
       box-shadow: 0 5px 15px rgba(0,0,0,0.08);
     }
     th, td { 
@@ -295,19 +317,335 @@
     .date-range input {
       width: 130px;
     }
+    
+    /* 分頁控制項樣式 */
+    .pagination-container {
+      margin-top: 30px;
+      text-align: center;
+    }
+    
+    .pagination-info {
+      margin-bottom: 15px;
+      color: #4a5568;
+      font-weight: 600;
+      font-size: 0.9em;
+    }
+    
+    .pagination-controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    
+    .pagination-btn {
+      background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e0 100%);
+      color: #4a5568;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 0.9em;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 600;
+      min-width: 40px;
+    }
+    
+    .pagination-btn:hover {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+    }
+    
+    .pagination-btn.active {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+    }
+    
+    .pagination-ellipsis {
+      color: #718096;
+      font-weight: 600;
+      padding: 0 8px;
+    }
+    /* 響應式設計 */
+    @media (max-width: 1024px) {
+      .container { 
+        padding: 30px; 
+        margin: 10px;
+      }
+      form { 
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 15px;
+      }
+      .print-controls {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+      }
+      .date-range {
+        justify-content: center;
+      }
+    }
+    
     @media (max-width: 768px) {
-      .container { padding: 20px; }
-      form { grid-template-columns: 1fr; }
-      h1 { font-size: 2em; }
-      table { font-size: 0.9em; }
-      th, td { padding: 10px 8px; }
+      body { 
+        padding: 10px; 
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      }
+      .container { 
+        padding: 20px; 
+        margin: 0;
+        border-radius: 15px;
+      }
+      .container > div:first-child {
+        flex-direction: column;
+        gap: 15px;
+        align-items: stretch;
+      }
+      .container > div:first-child h1 {
+        text-align: center;
+        font-size: 1.8em;
+        margin-bottom: 0;
+      }
+      .container > div:first-child > div {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .container > div:first-child button {
+        width: 100%;
+        padding: 15px;
+        font-size: 1em;
+      }
+      .form-section {
+        padding: 20px;
+        margin-bottom: 20px;
+      }
+      .form-title {
+        font-size: 1.1em;
+        margin-bottom: 15px;
+      }
+      form { 
+        grid-template-columns: 1fr; 
+        gap: 15px;
+      }
+      .form-group {
+        margin-bottom: 10px;
+      }
+      input, select, textarea { 
+        padding: 10px 12px; 
+        font-size: 16px; /* 防止 iOS 縮放 */
+      }
+      button { 
+        padding: 12px 20px; 
+        font-size: 0.9em;
+        width: 100%;
+      }
+      .table-section {
+        padding: 20px;
+      }
+      .table-title {
+        font-size: 1.1em;
+        margin-bottom: 15px;
+      }
+      table { 
+        font-size: 0.85em; 
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+      th, td { 
+        padding: 8px 6px; 
+        min-width: 80px;
+      }
       .export-buttons {
         float: none;
         justify-content: center;
         margin-bottom: 15px;
+        flex-direction: column;
+        gap: 8px;
       }
       .export-buttons > * {
-        margin: 5px;
+        margin: 0;
+        width: 100%;
+        text-align: center;
+      }
+      .print-controls {
+        margin: 30px 0 15px 0;
+        padding: 15px;
+      }
+      .print-controls label {
+        font-size: 0.9em;
+      }
+      .date-range {
+        flex-direction: column;
+        gap: 8px;
+      }
+      .date-range input {
+        width: 100%;
+      }
+      .status {
+        font-size: 1em;
+        padding: 12px;
+        margin: 15px 0;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      body { 
+        padding: 5px; 
+      }
+      .container { 
+        padding: 15px; 
+      }
+      h1 { 
+        font-size: 1.5em; 
+        margin-bottom: 15px;
+      }
+      .form-section {
+        padding: 15px;
+        margin-bottom: 15px;
+      }
+      .form-title {
+        font-size: 1em;
+        margin-bottom: 12px;
+      }
+      form { 
+        gap: 12px; 
+      }
+      input, select, textarea { 
+        padding: 8px 10px; 
+        font-size: 16px;
+      }
+      button { 
+        padding: 10px 16px; 
+        font-size: 0.85em;
+      }
+      .table-section {
+        padding: 15px;
+      }
+      table { 
+        font-size: 0.8em; 
+      }
+      th, td { 
+        padding: 6px 4px; 
+        min-width: 70px;
+      }
+      .export-buttons {
+        gap: 6px;
+      }
+      .export-btn, .import-btn, .clear-all-btn {
+        padding: 10px 16px;
+        font-size: 0.85em;
+      }
+      .print-controls {
+        margin: 20px 0 10px 0;
+        padding: 12px;
+      }
+      .status {
+        font-size: 0.9em;
+        padding: 10px;
+        margin: 12px 0;
+      }
+      .delete-btn {
+        padding: 4px 8px;
+        font-size: 0.75em;
+      }
+      .pagination-container {
+        margin-top: 20px;
+      }
+      .pagination-info {
+        font-size: 0.8em;
+        margin-bottom: 10px;
+      }
+      .pagination-controls {
+        gap: 6px;
+      }
+      .pagination-btn {
+        padding: 6px 10px;
+        font-size: 0.8em;
+        min-width: 35px;
+      }
+    }
+    
+    /* 橫向手機螢幕 */
+    @media (max-width: 768px) and (orientation: landscape) {
+      .container { 
+        padding: 15px; 
+      }
+      h1 { 
+        font-size: 1.6em; 
+        margin-bottom: 15px;
+      }
+      .form-section {
+        padding: 15px;
+        margin-bottom: 15px;
+      }
+      form { 
+        grid-template-columns: repeat(2, 1fr); 
+        gap: 10px;
+      }
+      .form-group.full-width {
+        grid-column: 1 / -1;
+      }
+      .export-buttons {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .export-buttons > * {
+        width: auto;
+        flex: 1;
+        min-width: 120px;
+      }
+    }
+    
+    /* 平板橫向 */
+    @media (min-width: 769px) and (max-width: 1024px) and (orientation: landscape) {
+      form { 
+        grid-template-columns: repeat(3, 1fr); 
+      }
+      .form-group.full-width {
+        grid-column: 1 / -1;
+      }
+    }
+    
+    /* 高解析度螢幕優化 */
+    @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+      .container {
+        box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+      }
+      .form-section, .table-section {
+        box-shadow: 0 10px 25px rgba(0,0,0,0.03);
+      }
+      table {
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      }
+    }
+    
+    /* 大螢幕優化 */
+    @media (min-width: 1200px) {
+      .container {
+        max-width: 1400px;
+        padding: 50px;
+      }
+      form {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 25px;
+      }
+      .form-section {
+        padding: 40px;
+        margin-bottom: 40px;
+      }
+      .table-section {
+        padding: 40px;
+      }
+      h1 {
+        font-size: 3em;
+        margin-bottom: 40px;
       }
     }
     @media print {
@@ -321,7 +659,17 @@
 </head>
 <body>
   <div class="container">
-    <h1>🏥 多項健康紀錄系統</h1>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+      <h1 style="margin: 0;">🏥 多項健康紀錄系統</h1>
+      <div style="display: flex; gap: 10px;">
+        <button onclick="openUserProfile()" style="background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%); padding: 12px 20px; font-size: 0.9em; white-space: nowrap;">
+          👤 使用者資料
+        </button>
+        <button onclick="openWeightManagement()" style="background: linear-gradient(135deg, #48bb78 0%, #38a169 100%); padding: 12px 20px; font-size: 0.9em; white-space: nowrap;">
+          ⚖️ 體重管理
+        </button>
+      </div>
+    </div>
     
     <div class="form-section">
       <div class="form-title">❤️ 血壓紀錄</div>
@@ -394,6 +742,47 @@
       </form>
     </div>
 
+    <div class="form-section">
+      <div class="form-title">⚖️ 體重紀錄</div>
+      <form id="weightForm">
+        <div class="form-group">
+          <label for="weightDatetime">📅 日期時間</label>
+          <input type="datetime-local" id="weightDatetime" name="datetime" required>
+        </div>
+        <div class="form-group">
+          <label for="weightTimePeriod">⏰ 時段</label>
+          <select id="weightTimePeriod" name="timePeriod" required>
+            <option value="早上">🌅 早上</option>
+            <option value="下午">🌆 下午</option>
+            <option value="晚上">🌙 晚上</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="weight">⚖️ 體重 (kg)</label>
+          <input type="number" id="weight" name="weight" min="20" max="200" step="0.1" placeholder="65.5" required>
+        </div>
+        <div class="form-group">
+          <label for="bodyFat">📊 體脂率 (%)</label>
+          <input type="number" id="bodyFat" name="bodyFat" min="5" max="50" step="0.1" placeholder="20.5">
+        </div>
+        <div class="form-group">
+          <label for="muscleMass">💪 肌肉量 (kg)</label>
+          <input type="number" id="muscleMass" name="muscleMass" min="10" max="100" step="0.1" placeholder="45.0">
+        </div>
+        <div class="form-group">
+          <label for="bmi">📏 BMI</label>
+          <input type="number" id="bmi" name="bmi" min="10" max="50" step="0.1" placeholder="22.5" readonly>
+        </div>
+        <div class="form-group full-width">
+          <label for="weightNote">📝 備註</label>
+          <textarea id="weightNote" name="note" rows="2" placeholder="例如：運動後測量、飲食調整後、特殊情況..."></textarea>
+        </div>
+        <div class="form-group full-width">
+          <button type="submit">✅ 新增體重紀錄</button>
+        </div>
+      </form>
+    </div>
+
     <div class="status" id="statusMsg"></div>
     
     <div class="table-section">
@@ -423,8 +812,9 @@
           <input type="date" id="endDate">
         </div>
       </div>
-      <table id="recordTable">
-        <thead>
+      <div class="table-container">
+        <table id="recordTable">
+                  <thead>
           <tr>
             <th>📅 日期</th>
             <th>⏰ 時段</th>
@@ -434,17 +824,25 @@
             <th>💗 心跳</th>
             <th>🩸 血糖</th>
             <th>🍽️ 血糖時機</th>
+            <th>⚖️ 體重</th>
+            <th>📊 體脂率</th>
+            <th>💪 肌肉量</th>
+            <th>📏 BMI</th>
             <th>📊 分級</th>
             <th>📝 備註</th>
             <th>❌ 操作</th>
           </tr>
         </thead>
-        <tbody>
+                  <tbody>
           <tr>
-            <td colspan="11" class="empty-message">尚無紀錄，請新增您的第一筆健康資料</td>
+            <td colspan="15" class="empty-message">尚無紀錄，請新增您的第一筆健康資料</td>
           </tr>
         </tbody>
-      </table>
+        </table>
+      </div>
+      
+      <!-- 分頁控制項 -->
+      <div id="pagination" class="pagination-container"></div>
     </div>
   </div>
 
@@ -464,6 +862,16 @@
       if (val >= 70) return { level: '💚 血糖正常', class: 'level-normal' };
       return { level: '⚠️ 血糖過低', class: 'level-2' };
     }
+    
+    function getBmiLevel(bmi) {
+      if (!bmi || isNaN(bmi)) return null;
+      if (bmi < 18.5) return { level: '⚠️ 體重過輕', class: 'level-2' };
+      if (bmi < 24) return { level: '💚 體重正常', class: 'level-normal' };
+      if (bmi < 27) return { level: '🌟 體重過重', class: 'level-pre' };
+      if (bmi < 30) return { level: '⚠️ 輕度肥胖', class: 'level-1' };
+      if (bmi < 35) return { level: '🚨 中度肥胖', class: 'level-2' };
+      return { level: '🚨 重度肥胖', class: 'level-2' };
+    }
 
     // 取得 localStorage 紀錄
     function getRecords() {
@@ -473,38 +881,124 @@
     function saveRecords(records) {
       localStorage.setItem('bpRecords', JSON.stringify(records));
     }
+    // 分頁變數
+    let currentPage = 1;
+    const recordsPerPage = 20;
+    
     // 顯示表格
-    function renderTable() {
+    function renderTable(page = 1) {
       const records = getRecords();
       const tbody = document.querySelector('#recordTable tbody');
       tbody.innerHTML = '';
       
       if (records.length === 0) {
         tbody.innerHTML = '<tr><td colspan="11" class="empty-message">尚無紀錄，請新增您的第一筆健康資料</td></tr>';
+        renderPagination(0);
         return;
       }
       
       records.sort((a, b) => new Date(b.datetime) - new Date(a.datetime));
-      for (const rec of records) {
+      
+      // 計算分頁
+      const totalPages = Math.ceil(records.length / recordsPerPage);
+      const startIndex = (page - 1) * recordsPerPage;
+      const endIndex = startIndex + recordsPerPage;
+      const pageRecords = records.slice(startIndex, endIndex);
+      
+      // 顯示當前頁面的紀錄
+      for (let i = 0; i < pageRecords.length; i++) {
+        const rec = pageRecords[i];
+        const actualIndex = startIndex + i; // 實際在原始陣列中的索引
         const d = new Date(rec.datetime);
         const dateStr = d.toLocaleDateString('zh-Hant', { year: 'numeric', month: '2-digit', day: '2-digit' });
         let levelStr = '';
         if (rec.bpLevel) levelStr += `<span class="${rec.bpLevel.class}">${rec.bpLevel.level}</span> `;
-        if (rec.sugarLevel) levelStr += `<span class="${rec.sugarLevel.class}">${rec.sugarLevel.level}</span>`;
+        if (rec.sugarLevel) levelStr += `<span class="${rec.sugarLevel.class}">${rec.sugarLevel.level}</span> `;
+        if (rec.bmiLevel) levelStr += `<span class="${rec.bmiLevel.class}">${rec.bmiLevel.level}</span>`;
         tbody.innerHTML += `<tr>
           <td>${dateStr}</td>
           <td>${rec.timePeriod || ''}</td>
-          <td>${rec.type === 'bloodPressure' ? '❤️ 血壓' : '🩸 血糖'}</td>
+          <td>${rec.type === 'bloodPressure' ? '❤️ 血壓' : rec.type === 'bloodSugar' ? '🩸 血糖' : '⚖️ 體重'}</td>
           <td>${rec.systolic ?? ''}</td>
           <td>${rec.diastolic ?? ''}</td>
           <td>${rec.heartRate ?? ''}</td>
           <td>${rec.bloodSugar ?? ''}</td>
           <td>${rec.sugarType ?? ''}</td>
+          <td>${rec.weight ?? ''}</td>
+          <td>${rec.bodyFat ?? ''}</td>
+          <td>${rec.muscleMass ?? ''}</td>
+          <td>${rec.bmi ?? ''}</td>
           <td>${levelStr}</td>
           <td>${rec.note ? rec.note : ''}</td>
-          <td><button class="delete-btn" onclick="deleteRecord(${records.indexOf(rec)})">🗑️ 刪除</button></td>
+          <td><button class="delete-btn" onclick="deleteRecord(${actualIndex})">🗑️ 刪除</button></td>
         </tr>`;
       }
+      
+      // 渲染分頁控制項
+      renderPagination(records.length, page, totalPages);
+    }
+    
+    // 渲染分頁控制項
+    function renderPagination(totalRecords, currentPage, totalPages) {
+      const paginationContainer = document.getElementById('pagination');
+      if (!paginationContainer) return;
+      
+      if (totalRecords === 0) {
+        paginationContainer.innerHTML = '';
+        return;
+      }
+      
+      let paginationHTML = '<div class="pagination-info">';
+      paginationHTML += `顯示第 ${(currentPage - 1) * recordsPerPage + 1} - ${Math.min(currentPage * recordsPerPage, totalRecords)} 筆，共 ${totalRecords} 筆紀錄`;
+      paginationHTML += '</div>';
+      
+      paginationHTML += '<div class="pagination-controls">';
+      
+      // 上一頁按鈕
+      if (currentPage > 1) {
+        paginationHTML += `<button class="pagination-btn" onclick="changePage(${currentPage - 1})">⬅️ 上一頁</button>`;
+      }
+      
+      // 頁碼按鈕
+      const startPage = Math.max(1, currentPage - 2);
+      const endPage = Math.min(totalPages, currentPage + 2);
+      
+      if (startPage > 1) {
+        paginationHTML += `<button class="pagination-btn" onclick="changePage(1)">1</button>`;
+        if (startPage > 2) {
+          paginationHTML += '<span class="pagination-ellipsis">...</span>';
+        }
+      }
+      
+      for (let i = startPage; i <= endPage; i++) {
+        if (i === currentPage) {
+          paginationHTML += `<button class="pagination-btn active">${i}</button>`;
+        } else {
+          paginationHTML += `<button class="pagination-btn" onclick="changePage(${i})">${i}</button>`;
+        }
+      }
+      
+      if (endPage < totalPages) {
+        if (endPage < totalPages - 1) {
+          paginationHTML += '<span class="pagination-ellipsis">...</span>';
+        }
+        paginationHTML += `<button class="pagination-btn" onclick="changePage(${totalPages})">${totalPages}</button>`;
+      }
+      
+      // 下一頁按鈕
+      if (currentPage < totalPages) {
+        paginationHTML += `<button class="pagination-btn" onclick="changePage(${currentPage + 1})">下一頁 ➡️</button>`;
+      }
+      
+      paginationHTML += '</div>';
+      
+      paginationContainer.innerHTML = paginationHTML;
+    }
+    
+    // 切換頁面
+    function changePage(page) {
+      currentPage = page;
+      renderTable(page);
     }
     // 血壓表單送出
     document.getElementById('bpForm').onsubmit = function(e) {
@@ -537,7 +1031,7 @@
       });
       
       saveRecords(records);
-      renderTable();
+      renderTable(currentPage);
       this.reset();
       document.getElementById('bpDatetime').value = new Date().toISOString().slice(0,16);
     };
@@ -575,17 +1069,91 @@
       });
       
       saveRecords(records);
-      renderTable();
+      renderTable(currentPage);
       this.reset();
       document.getElementById('sugarDatetime').value = new Date().toISOString().slice(0,16);
     };
+    
+    // 體重表單送出
+    document.getElementById('weightForm').onsubmit = function(e) {
+      e.preventDefault();
+      const datetime = document.getElementById('weightDatetime').value;
+      const timePeriod = document.getElementById('weightTimePeriod').value;
+      const weight = document.getElementById('weight').value;
+      const bodyFat = document.getElementById('bodyFat').value;
+      const muscleMass = document.getElementById('muscleMass').value;
+      const bmi = document.getElementById('bmi').value;
+      const note = document.getElementById('weightNote').value.trim();
+      
+      if (!datetime) return;
+      
+      const bmiLevel = getBmiLevel(Number(bmi));
+      
+      // 狀態顯示
+      if (bmiLevel) {
+        document.getElementById('statusMsg').innerHTML = `<span class="${bmiLevel.class}">${bmiLevel.level}</span>`;
+      } else {
+        document.getElementById('statusMsg').innerHTML = '<span style="color:#718096">體重紀錄已新增</span>';
+      }
+      
+      // 新增紀錄
+      const records = getRecords();
+      records.push({
+        datetime, 
+        timePeriod,
+        type: 'weight',
+        weight: Number(weight),
+        bodyFat: bodyFat ? Number(bodyFat) : null,
+        muscleMass: muscleMass ? Number(muscleMass) : null,
+        bmi: bmi ? Number(bmi) : null,
+        note,
+        bmiLevel
+      });
+      
+      saveRecords(records);
+      renderTable(currentPage);
+      this.reset();
+      document.getElementById('weightDatetime').value = new Date().toISOString().slice(0,16);
+    };
 
+    // 開啟使用者資料頁面
+    function openUserProfile() {
+      window.open('user-profile.html', '_blank', 'width=800,height=600,scrollbars=yes,resizable=yes');
+    }
+    
+    // 開啟體重管理頁面
+    function openWeightManagement() {
+      window.open('weight-management.html', '_blank', 'width=1000,height=700,scrollbars=yes,resizable=yes');
+    }
+    
+    // BMI 自動計算
+    function calculateBMI() {
+      const weight = document.getElementById('weight').value;
+      const height = getUserHeight(); // 從使用者資料取得身高
+      
+      if (weight && height) {
+        const bmi = (weight / Math.pow(height / 100, 2)).toFixed(1);
+        document.getElementById('bmi').value = bmi;
+      }
+    }
+    
+    // 取得使用者身高
+    function getUserHeight() {
+      const profile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+      return profile.height ? Number(profile.height) : null;
+    }
+    
     // 頁面載入時
     window.onload = function() {
       // 預設填入現在時間
       document.getElementById('bpDatetime').value = new Date().toISOString().slice(0,16);
       document.getElementById('sugarDatetime').value = new Date().toISOString().slice(0,16);
-      renderTable();
+      document.getElementById('weightDatetime').value = new Date().toISOString().slice(0,16);
+      
+      // 添加體重輸入監聽，自動計算 BMI
+      document.getElementById('weight').addEventListener('input', calculateBMI);
+      
+      renderTable(currentPage);
     };
 
     // 匯出 CSV 功能
@@ -596,7 +1164,7 @@
         return;
       }
       
-      let csv = '日期,時段,類型,收縮壓,舒張壓,心跳,血糖,血糖時機,分級,備註\n';
+      let csv = '日期,時段,類型,收縮壓,舒張壓,心跳,血糖,血糖時機,體重,體脂率,肌肉量,BMI,分級,備註\n';
       
       records.sort((a, b) => new Date(b.datetime) - new Date(a.datetime));
       for (const rec of records) {
@@ -604,9 +1172,12 @@
         const dateStr = d.toLocaleDateString('zh-Hant', { year: 'numeric', month: '2-digit', day: '2-digit' });
         let levelStr = '';
         if (rec.bpLevel) levelStr += rec.bpLevel.level + ' ';
-        if (rec.sugarLevel) levelStr += rec.sugarLevel.level;
+        if (rec.sugarLevel) levelStr += rec.sugarLevel.level + ' ';
+        if (rec.bmiLevel) levelStr += rec.bmiLevel.level;
         
-        csv += `"${dateStr}","${rec.timePeriod || ''}","${rec.type === 'bloodPressure' ? '❤️ 血壓' : '🩸 血糖'}","${rec.systolic || ''}","${rec.diastolic || ''}","${rec.heartRate || ''}","${rec.bloodSugar || ''}","${rec.sugarType || ''}","${levelStr}","${rec.note || ''}"\n`;
+        const typeStr = rec.type === 'bloodPressure' ? '❤️ 血壓' : rec.type === 'bloodSugar' ? '🩸 血糖' : '⚖️ 體重';
+        
+        csv += `"${dateStr}","${rec.timePeriod || ''}","${typeStr}","${rec.systolic || ''}","${rec.diastolic || ''}","${rec.heartRate || ''}","${rec.bloodSugar || ''}","${rec.sugarType || ''}","${rec.weight || ''}","${rec.bodyFat || ''}","${rec.muscleMass || ''}","${rec.bmi || ''}","${levelStr}","${rec.note || ''}"\n`;
       }
       
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -657,7 +1228,7 @@
             if (!existMap[key(rec)]) records.push(rec);
           }
           saveRecords(records);
-          renderTable();
+          renderTable(currentPage);
           document.getElementById('statusMsg').innerHTML = '<span style="color:#3182ce">✅ 匯入成功！</span>';
         } catch {
           alert('匯入失敗，請確認檔案格式正確！');
@@ -673,7 +1244,14 @@
         const records = getRecords();
         records.splice(index, 1);
         saveRecords(records);
-        renderTable();
+        
+        // 檢查是否需要調整當前頁面
+        const totalPages = Math.ceil(records.length / recordsPerPage);
+        if (currentPage > totalPages && totalPages > 0) {
+          currentPage = totalPages;
+        }
+        
+        renderTable(currentPage);
         document.getElementById('statusMsg').innerHTML = '<span style="color:#e53e3e">🗑️ 紀錄已刪除</span>';
       }
     }
@@ -682,7 +1260,8 @@
     function clearAllRecords() {
       if (confirm('確定要清空所有紀錄嗎？此操作無法復原！')) {
         localStorage.removeItem('bpRecords');
-        renderTable();
+        currentPage = 1;
+        renderTable(currentPage);
         document.getElementById('statusMsg').innerHTML = '<span style="color:#e53e3e">🗑️ 所有紀錄已清空</span>';
       }
     }
@@ -814,6 +1393,10 @@
                 <th>心跳</th>
                 <th>血糖</th>
                 <th>血糖時機</th>
+                <th>體重</th>
+                <th>體脂率</th>
+                <th>肌肉量</th>
+                <th>BMI</th>
                 <th>分級</th>
                 <th>備註</th>
               </tr>
@@ -824,16 +1407,22 @@
                 const dateStr = d.toLocaleDateString('zh-Hant', { year: 'numeric', month: '2-digit', day: '2-digit' });
                 let levelStr = '';
                 if (rec.bpLevel) levelStr += `<span class="${rec.bpLevel.class}">${rec.bpLevel.level}</span> `;
-                if (rec.sugarLevel) levelStr += `<span class="${rec.sugarLevel.class}">${rec.sugarLevel.level}</span>`;
+                if (rec.sugarLevel) levelStr += `<span class="${rec.sugarLevel.class}">${rec.sugarLevel.level}</span> `;
+                if (rec.bmiLevel) levelStr += `<span class="${rec.bmiLevel.class}">${rec.bmiLevel.level}</span>`;
+                const typeStr = rec.type === 'bloodPressure' ? '❤️ 血壓' : rec.type === 'bloodSugar' ? '🩸 血糖' : '⚖️ 體重';
                 return `<tr>
                   <td>${dateStr}</td>
                   <td>${rec.timePeriod || ''}</td>
-                  <td>${rec.type === 'bloodPressure' ? '❤️ 血壓' : '🩸 血糖'}</td>
+                  <td>${typeStr}</td>
                   <td>${rec.systolic ?? ''}</td>
                   <td>${rec.diastolic ?? ''}</td>
                   <td>${rec.heartRate ?? ''}</td>
                   <td>${rec.bloodSugar ?? ''}</td>
                   <td>${rec.sugarType ?? ''}</td>
+                  <td>${rec.weight ?? ''}</td>
+                  <td>${rec.bodyFat ?? ''}</td>
+                  <td>${rec.muscleMass ?? ''}</td>
+                  <td>${rec.bmi ?? ''}</td>
                   <td>${levelStr}</td>
                   <td>${rec.note ? rec.note : ''}</td>
                 </tr>`;
